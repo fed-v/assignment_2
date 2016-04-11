@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">SugarTracker</string>
+
+    <string name="user">Federico Venturino</string>
+
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Create Profile</string>
+    <string name="title_activity_add">Add Sugar</string>
+    <string name="title_activity_create_profile">Create User Profile</string>
+    <string name="CreateUserTitle">Create your user profile: </string>
+
+    <string name="createUserSubmit_btn">Create User</string>
+    <string name="homeTest">Welcome to Sugar Tracker!</string>
+
+</resources>
