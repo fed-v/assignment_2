@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -42,14 +43,14 @@ public class CreateProfileActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        int ageValue = 0;
+        /*int ageValue = 0;
         try {
             EditText textField2 = (EditText) findViewById(R.id.ageInput);
             ageValue = Integer.parseInt(textField2.getText().toString());
             textField2.setText("");
         } catch (NumberFormatException e) {
             e.printStackTrace();
-        }
+        }*/
 
         int limitValue = 0;
         try {
@@ -61,8 +62,10 @@ public class CreateProfileActivity extends AppCompatActivity {
         }
 
         myDBHelper = new MySQLiteHelper(this);
-        myDBHelper.createUser(nameValue, ageValue, limitValue);
+        myDBHelper.createUser(nameValue, limitValue);
 
+        // End this Activity and go back to the previous one!
+        finish();
     }
 
 }

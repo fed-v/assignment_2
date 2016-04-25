@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.TableRow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,24 +18,9 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     // Create my database
     /////////////////////////////////////
 
-    public static final String TABLE = "user";
-    public static final String COLUMN_ID = "_id";   // The Primary key MUST be called _id
-    public static final String COLUMN_NAME = "name";
-    public static final String COLUMN_LIMIT = "limit";
-    public static final String COLUMN_SUM = "sum";
-
     private static final String DATABASE_NAME = "user.db";
+    private static final String TABLE = "users";
     private static final int DATABASE_VERSION = 1;
-
-
-    // Database creation sql statement
-    private static final String DATABASE_CREATE = "create table "
-            + TABLE + "(" + COLUMN_ID
-            + " integer primary key autoincrement, " + COLUMN_NAME
-            + " integer not null, " + COLUMN_LIMIT
-            + " integer not null, " + COLUMN_SUM
-            + " text not null);";
-
 
 
     //////////////////////////////////////
@@ -51,8 +37,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     /////////////////////////////////////
 
     @Override
-    public void onCreate(SQLiteDatabase database) {
-        database.execSQL(DATABASE_CREATE);
+    public void onCreate(SQLiteDatabase db) {
+
+        db.execSQL(
+                "create table users " +
+                        "(_id integer primary key autoincrement, name text not null, limitK integer not null, sumK integer default 0)"
+        );
+
+
         Log.v(MySQLiteHelper.class.getName(), "Database created!");
     }
 
@@ -75,36 +67,27 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public void addAmount(int amount) {
 
-        /*int sum = 0;
+        Cursor rs = this.getData();
+        rs.moveToFirst();
+
+        int sum = rs.getInt(rs.getColumnIndex("limitK")) + amount;
+
+        ContentValues values = new ContentValues();
+        values.put("limitK", sum);
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.getSum();
-        cursor.close();
-
-        sum = cursor.getInt(3) + amount;*/
-
-
-        Log.v(MySQLiteHelper.class.getName(), "Value added: " + amount);
+        db.update(TABLE, values, null, null);
 
     }
 
+    public void createUser(String userName, int limit) {
 
-    public void createUser(String userName, int age, int limit) {
-
-        /*
-        // Get an instance of your database for writing
         SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", userName);
+        contentValues.put("limitK", limit);
+        db.insert("users", null, contentValues);
 
-        // Set values to be stored
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_NAME, userName); // User Name
-        values.put(COLUMN_LIMIT, limit); // Sugar Limit
-        values.put(COLUMN_SUM, 0); // Current amount
-
-        // Inserting Row
-        db.insert(TABLE, null, values);
-        db.close();
-        */
     }
 
     //////////////////////////////////////
@@ -112,11 +95,15 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     /////////////////////////////////////
 
     public int getLimit() {
-        String query = "SELECT limit FROM " + TABLE;
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        cursor.close();
-        return cursor.getInt(2);
+        Cursor cursor =  db.rawQuery( "select * from users", null );
+        return cursor.getInt(cursor.getColumnIndex("limitK"));
+    }
+
+    public Cursor getData(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery( "select * from users", null );
+        return res;
     }
 
     public int getSum() {
@@ -125,6 +112,11 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
         cursor.close();
         return cursor.getInt(3);
+    }
+
+    public void deleteTable() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        db.delete(TABLE, null, null);
     }
 
 }

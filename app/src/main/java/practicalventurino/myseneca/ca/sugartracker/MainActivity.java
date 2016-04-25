@@ -1,9 +1,11 @@
 package practicalventurino.myseneca.ca.sugartracker;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +26,29 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
+        //////////////////////////////////////////////////
+        /// QUERY THE DB TO SEE IF THERE ARE USERS
+
+        MySQLiteHelper myDB = new MySQLiteHelper(this);
+
+        Cursor res = myDB.getData();
+
+        int count = res.getCount();
+
+        //Toast.makeText(getApplicationContext(), "Users: " + count, Toast.LENGTH_SHORT).show();
+
+
+        // If there isn't a user, go create one!
+        if(count == 0) {
+            Intent intent = new Intent(getApplicationContext(), CreateProfileActivity.class);
+            startActivity(intent);
+        }
+
+
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -72,11 +97,14 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            // Change to add sugar Activity!
-            Intent intent = new Intent(getApplicationContext(), CreateProfileActivity.class);
-            startActivity(intent);
+        if (id == R.id.deleteUser) {
+
+            // Delete User for debugging!
+            MySQLiteHelper myDB = new MySQLiteHelper(this);
+            myDB.deleteTable();
+            Toast.makeText(getApplicationContext(), "User deleted! ", Toast.LENGTH_SHORT).show();
             return true;
+
         }
 
         return super.onOptionsItemSelected(item);

@@ -7,7 +7,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Create Profile</string>
+    <string name="deleteUser">Delete User</string>
     <string name="title_activity_add">Add Sugar</string>
     <string name="title_activity_create_profile">Create User Profile</string>
     <string name="CreateUserTitle">Create your user profile: </string>

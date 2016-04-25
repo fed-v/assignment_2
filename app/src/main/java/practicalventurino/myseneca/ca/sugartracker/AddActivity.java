@@ -1,5 +1,6 @@
 package practicalventurino.myseneca.ca.sugartracker;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,7 +16,6 @@ public class AddActivity extends AppCompatActivity {
     //private Object View;
     private MySQLiteHelper myDBHelper;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,14 +23,19 @@ public class AddActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         myDBHelper = new MySQLiteHelper(this);
 
-        Log.v(MySQLiteHelper.class.getName(), "Database: " + myDBHelper.getDatabaseName());
+        // Get data from database
+        Cursor rs = myDBHelper.getData();
+        rs.moveToFirst();
 
+        // Get values
+        String name = rs.getString(rs.getColumnIndex("name"));
+        int limit = rs.getInt(rs.getColumnIndex("limitK"));
 
-        //myDBHelper.createUser("john", 200);
+        Log.v(MySQLiteHelper.class.getName(), "User limit is: " + limit);
 
-        //Log.v(MySQLiteHelper.class.getName(), "User limit is: " + myDBHelper.getLimit());
 
 
 
@@ -55,9 +60,12 @@ public class AddActivity extends AppCompatActivity {
         myDBHelper = new MySQLiteHelper(this);
         myDBHelper.addAmount(value);
 
-        Toast.makeText(AddActivity.this, "Value added: " + value, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(AddActivity.this, "Value added: " + value, Toast.LENGTH_SHORT).show();
 
         textField.setText("");
+
+        // End this Activity and go back to the previous one!
+        finish();
     }
 
 }
