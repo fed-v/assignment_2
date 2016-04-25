@@ -1,11 +1,11 @@
 package practicalventurino.myseneca.ca.sugartracker;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,10 +15,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,24 +33,19 @@ public class MainActivity extends AppCompatActivity
 
         //////////////////////////////////////////////////
         /// QUERY THE DB TO SEE IF THERE ARE USERS
-
         MySQLiteHelper myDB = new MySQLiteHelper(this);
-
-        Cursor res = myDB.getData();
-
-        int count = res.getCount();
 
         //Toast.makeText(getApplicationContext(), "Users: " + count, Toast.LENGTH_SHORT).show();
 
+        Toast.makeText(this, "Create", Toast.LENGTH_SHORT).show();
 
         // If there isn't a user, go create one!
-        if(count == 0) {
+        if(myDB.getUserCount() == 0) {
             Intent intent = new Intent(getApplicationContext(), CreateProfileActivity.class);
             startActivity(intent);
+        } else {
+            displayUserInfo();
         }
-
-
-
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -110,6 +108,21 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /** Called when the activity has become visible. */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+        Toast.makeText(this, "Resume", Toast.LENGTH_SHORT).show();
+
+        // if no user, don't update UI
+        MySQLiteHelper myDB = new MySQLiteHelper(this);
+        if(myDB.getUserCount() > 0) {
+            displayUserInfo();
+        }
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -132,4 +145,65 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    protected void displayUserInfo() {
+
+        MySQLiteHelper myDB = new MySQLiteHelper(this);
+
+
+        // Query the db
+            int dailySugarLimit = myDB.getDailySugarLimit();
+            int currentAmount = myDB.getDailySum();
+
+            // Display Current Amount
+            TextView currentAmountField = (TextView) findViewById(R.id.currentAmount);
+            currentAmountField.setText(currentAmount + " gr");
+
+            // Display Daily Limit
+            TextView dailyLimitField = (TextView) findViewById(R.id.limitField);
+            dailyLimitField.setText(dailySugarLimit + "gr");
+
+            // Calculate Progress
+            int progress = (100 * currentAmount) / dailySugarLimit;
+
+            // Display Progress Bar
+            ProgressBar mProgress = (ProgressBar) findViewById(R.id.progressBar);
+
+            if (progress < 100) {
+                mProgress.setProgress(progress);
+            } else {
+                mProgress.setProgress(100);
+                mProgress.getProgressDrawable().setColorFilter(
+                        Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
+            }
+
+
+    }
+
+    enum TimeSpan {
+        DAILY, WEEKLY, MONTHLY
+    };
+
+   /*void displaySugarIntake(TimeSan period) {
+
+
+       MySQLiteHelper myDB = new MySQLiteHelper(this);
+
+       int
+
+
+       switch (period) {
+           case DAILY:
+               where = "WHERE .....";
+           case WEEKLY:
+               where = "";
+
+           case MONTHLYH:
+       }
+
+       ....
+
+
+   }*/
 }

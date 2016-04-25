@@ -6,10 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.TableRow;
-
-import java.util.ArrayList;
-import java.util.List;
+import android.widget.Toast;
 
 public class MySQLiteHelper extends SQLiteOpenHelper {
 
@@ -41,7 +38,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
         db.execSQL(
                 "create table users " +
-                        "(_id integer primary key autoincrement, name text not null, limitK integer not null, sumK integer default 0)"
+                        "(_id integer primary key autoincrement, " +
+                        "name text not null," +
+                        "limitK integer not null, " +
+                        "sumK integer default 0)"
         );
 
 
@@ -67,13 +67,12 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     public void addAmount(int amount) {
 
-        Cursor rs = this.getData();
-        rs.moveToFirst();
+        int sum = this.getDailySum() + amount;
 
-        int sum = rs.getInt(rs.getColumnIndex("limitK")) + amount;
+        //Log.v("addAmount", "Current Sum: " + sum);
 
         ContentValues values = new ContentValues();
-        values.put("limitK", sum);
+        values.put("sumK", sum);
 
         SQLiteDatabase db = this.getReadableDatabase();
         db.update(TABLE, values, null, null);
@@ -94,24 +93,35 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     // Getters
     /////////////////////////////////////
 
-    public int getLimit() {
+    public int getDailySugarLimit() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor =  db.rawQuery( "select * from users", null );
-        return cursor.getInt(cursor.getColumnIndex("limitK"));
+        Cursor cursor =  db.rawQuery("select limitK from users", null);
+        cursor.moveToFirst();
+        int rc = cursor.getInt(0);
+        return rc;
     }
 
-    public Cursor getData(){
+    public Cursor getUserData(){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from users", null );
+        Cursor res =  db.rawQuery("select * from users", null);
         return res;
     }
 
-    public int getSum() {
-        String query = "SELECT sum FROM " + TABLE;
+    public int getUserCount() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        cursor.close();
-        return cursor.getInt(3);
+        Cursor cursor =  db.rawQuery("select count(*) from users", null);
+
+        cursor.moveToFirst();
+        int rc = cursor.getInt(0);
+        return rc;
+    }
+
+    public int getDailySum() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor =  db.rawQuery( "select sumK from users", null );
+        cursor.moveToFirst();
+        int rc = cursor.getInt(0);
+        return rc;
     }
 
     public void deleteTable() {

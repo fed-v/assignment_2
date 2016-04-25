@@ -31,8 +31,6 @@ public class CreateProfileActivity extends AppCompatActivity {
 
     public void createUser(View view) {
 
-        //Toast.makeText(getApplicationContext(), "Create button clicked!", Toast.LENGTH_SHORT).show();
-
         // Get input values
         String nameValue = "";
         try {
@@ -42,15 +40,6 @@ public class CreateProfileActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        /*int ageValue = 0;
-        try {
-            EditText textField2 = (EditText) findViewById(R.id.ageInput);
-            ageValue = Integer.parseInt(textField2.getText().toString());
-            textField2.setText("");
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-        }*/
 
         int limitValue = 0;
         try {

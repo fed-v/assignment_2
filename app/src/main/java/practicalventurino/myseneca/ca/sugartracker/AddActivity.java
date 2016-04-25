@@ -2,14 +2,11 @@ package practicalventurino.myseneca.ca.sugartracker;
 
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -27,11 +24,11 @@ public class AddActivity extends AppCompatActivity {
         myDBHelper = new MySQLiteHelper(this);
 
         // Get data from database
-        Cursor rs = myDBHelper.getData();
+        Cursor rs = myDBHelper.getUserData();
         rs.moveToFirst();
 
         // Get values
-        String name = rs.getString(rs.getColumnIndex("name"));
+        //String name = rs.getString(rs.getColumnIndex("name"));
         int limit = rs.getInt(rs.getColumnIndex("limitK"));
 
         Log.v(MySQLiteHelper.class.getName(), "User limit is: " + limit);
