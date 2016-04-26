@@ -35,16 +35,12 @@ public class MainActivity extends AppCompatActivity
         /// QUERY THE DB TO SEE IF THERE ARE USERS
         MySQLiteHelper myDB = new MySQLiteHelper(this);
 
-        //Toast.makeText(getApplicationContext(), "Users: " + count, Toast.LENGTH_SHORT).show();
-
-        Toast.makeText(this, "Create", Toast.LENGTH_SHORT).show();
-
         // If there isn't a user, go create one!
         if(myDB.getUserCount() == 0) {
             Intent intent = new Intent(getApplicationContext(), CreateProfileActivity.class);
             startActivity(intent);
         } else {
-            displayUserInfo();
+            displayUserInfo(TimeSpan.DAILY);
         }
 
 
@@ -98,9 +94,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.deleteUser) {
 
             // Delete User for debugging!
-            MySQLiteHelper myDB = new MySQLiteHelper(this);
+            /*MySQLiteHelper myDB = new MySQLiteHelper(this);
             myDB.deleteTable();
-            Toast.makeText(getApplicationContext(), "User deleted! ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "User deleted! ", Toast.LENGTH_SHORT).show();*/
             return true;
 
         }
@@ -113,13 +109,10 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-
-        Toast.makeText(this, "Resume", Toast.LENGTH_SHORT).show();
-
         // if no user, don't update UI
         MySQLiteHelper myDB = new MySQLiteHelper(this);
         if(myDB.getUserCount() > 0) {
-            displayUserInfo();
+            displayUserInfo(TimeSpan.DAILY);
         }
     }
 
@@ -130,11 +123,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_daily) {
-            Toast.makeText(MainActivity.this, "Show daily values!", Toast.LENGTH_SHORT).show();
+            displayUserInfo(TimeSpan.DAILY);
         } else if (id == R.id.nav_weekly) {
-            Toast.makeText(MainActivity.this, "Show weekly values!", Toast.LENGTH_SHORT).show();
+            displayUserInfo(TimeSpan.WEEKLY);
         } else if (id == R.id.nav_monthly) {
-            Toast.makeText(MainActivity.this, "Show monthly values!", Toast.LENGTH_SHORT).show();
+            displayUserInfo(TimeSpan.MONTHLY);
         } else if (id == R.id.nav_share) {
             Toast.makeText(MainActivity.this, "Share on social media!", Toast.LENGTH_SHORT).show();
         }else if (id == R.id.nav_send) {
@@ -146,64 +139,64 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    enum TimeSpan {
+        DAILY, WEEKLY, MONTHLY
+    }
 
-    protected void displayUserInfo() {
+    protected void displayUserInfo(TimeSpan timeSpan) {
+
+        //Toast.makeText(getApplicationContext(), "Show user info for: " + timeSpan, Toast.LENGTH_SHORT).show();
 
         MySQLiteHelper myDB = new MySQLiteHelper(this);
 
-
         // Query the db
-            int dailySugarLimit = myDB.getDailySugarLimit();
-            int currentAmount = myDB.getDailySum();
+        int sugarLimit = myDB.getDailySugarLimit();
+        int currentAmount = myDB.getDailySum();
+        String userName = myDB.getUserName();
 
-            // Display Current Amount
-            TextView currentAmountField = (TextView) findViewById(R.id.currentAmount);
-            currentAmountField.setText(currentAmount + " gr");
+        // Calculate Progress
+        int progress;
+        switch (timeSpan) {
+            case DAILY: progress = (100 * currentAmount) / sugarLimit;
+                        break;
+            case WEEKLY: sugarLimit = sugarLimit * 7;
+                         progress = ((100 * currentAmount) / sugarLimit);
+                         break;
+            case MONTHLY: sugarLimit = sugarLimit * 30;
+                          progress = ((100 * currentAmount) / sugarLimit);
+                          break;
+            default: progress = 0;
+        }
 
-            // Display Daily Limit
-            TextView dailyLimitField = (TextView) findViewById(R.id.limitField);
-            dailyLimitField.setText(dailySugarLimit + "gr");
+        // Display Current Amount
+        TextView currentAmountField = (TextView) findViewById(R.id.currentAmount);
+        currentAmountField.setText(currentAmount + " gr");
 
-            // Calculate Progress
-            int progress = (100 * currentAmount) / dailySugarLimit;
+        // Display Daily Limit
+        TextView dailyLimitField = (TextView) findViewById(R.id.limitField);
+        dailyLimitField.setText(sugarLimit + "gr");
 
-            // Display Progress Bar
-            ProgressBar mProgress = (ProgressBar) findViewById(R.id.progressBar);
+        // Display Daily Limit
+        TextView homeTitle = (TextView) findViewById(R.id.homeTitle);
+        homeTitle.setText(userName.substring(0, 1).toUpperCase() + userName.substring(1) + "'s " + timeSpan.toString().toLowerCase() + " intake is: ");
 
-            if (progress < 100) {
-                mProgress.setProgress(progress);
-            } else {
-                mProgress.setProgress(100);
-                mProgress.getProgressDrawable().setColorFilter(
-                        Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
-            }
+        // Source: http://stackoverflow.com/questions/3904579/how-to-capitalize-the-first-letter-of-a-string-in-java
 
+
+        // Display Progress Bar
+        ProgressBar mProgress = (ProgressBar) findViewById(R.id.progressBar);
+
+        if (progress < 100) {
+            mProgress.setProgress(progress);
+            mProgress.getProgressDrawable().setColorFilter(Color.DKGRAY, android.graphics.PorterDuff.Mode.SRC_IN);
+        } else {
+            mProgress.setProgress(100);
+            mProgress.getProgressDrawable().setColorFilter(
+                    Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
+
+            // Source: http://stackoverflow.com/questions/2020882/how-to-change-progress-bars-progress-color-in-android
+        }
 
     }
 
-    enum TimeSpan {
-        DAILY, WEEKLY, MONTHLY
-    };
-
-   /*void displaySugarIntake(TimeSan period) {
-
-
-       MySQLiteHelper myDB = new MySQLiteHelper(this);
-
-       int
-
-
-       switch (period) {
-           case DAILY:
-               where = "WHERE .....";
-           case WEEKLY:
-               where = "";
-
-           case MONTHLYH:
-       }
-
-       ....
-
-
-   }*/
 }

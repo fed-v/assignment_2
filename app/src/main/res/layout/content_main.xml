@@ -18,6 +18,14 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="New Text"
+        android:textSize="20dp"
+        android:id="@+id/homeTitle"
+        android:layout_gravity="center_horizontal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_marginTop="25dp"
         android:text="0"
@@ -53,18 +61,6 @@
             android:layout_marginStart="10dp"
             />
 
-
-        <!--<TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_marginTop="25dp"
-            android:text="0 gr"
-            android:textSize="20dp"
-            android:id="@+id/amountValue"
-            android:layout_toLeftOf="@+id/progressBar"
-            android:layout_toStartOf="@+id/progressBar"
-            android:layout_gravity="center_horizontal" />-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

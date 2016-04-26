@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -121,6 +122,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         Cursor cursor =  db.rawQuery( "select sumK from users", null );
         cursor.moveToFirst();
         int rc = cursor.getInt(0);
+        return rc;
+    }
+
+    public String getUserName() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor =  db.rawQuery( "select name from users", null );
+        cursor.moveToFirst();
+        String rc = cursor.getString(0);
         return rc;
     }
 
